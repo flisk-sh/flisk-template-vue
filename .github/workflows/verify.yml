@@ -18,7 +18,7 @@ jobs:
           HEALTH_PATH=$(python3 -c 'import json;print(json.load(open("service.json"))["healthCheckPath"])')
           docker run -d --name template -e PORT=4000 -p 4000:4000 template
           code=000
-          for i in $(seq 1 60); do
+          for _ in $(seq 1 60); do
             code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:4000$HEALTH_PATH" || true)
             if [ "$code" = "200" ]; then echo "HTTP 200 on $HEALTH_PATH"; exit 0; fi
             sleep 2
