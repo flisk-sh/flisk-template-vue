@@ -1,0 +1,16 @@
+name: e2e
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  e2e:
+    # Runs this template through a real `flisk up` and Traefik (flisk-sh/flisk#1965). Bump both SHAs together.
+    uses: flisk-sh/flisk/.github/workflows/byo-template-e2e.yml@084d3722a8a2d31fb4ec93e3f48a3548c68c8fc5
+    with:
+      flisk-ref: 084d3722a8a2d31fb4ec93e3f48a3548c68c8fc5
