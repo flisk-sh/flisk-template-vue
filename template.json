@@ -1,0 +1,10 @@
+{
+  "id": "vue",
+  "label": "Vue (create-vue)",
+  "upstream": "npm create vue@latest",
+  "port": 3000,
+  "healthPath": "/",
+  "stack": "A real create-vue app, Vite dev server",
+  "notes": "Scaffolder runs at build time; Vite listens on 0.0.0.0 and the port from PORT.",
+  "resourceCommand": "flisk resource <name> --type bring-your-own --stack <stack> --dockerfile ./Dockerfile --yes"
+}

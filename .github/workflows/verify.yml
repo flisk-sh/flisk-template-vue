@@ -1,0 +1,29 @@
+name: verify
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Build the image
+        run: docker build -t template .
+      - name: Run it and expect HTTP 200 on the health path
+        run: |
+          HEALTH_PATH=$(python3 -c 'import json;print(json.load(open("template.json"))["healthPath"])')
+          docker run -d --name template -e PORT=4000 -p 4000:4000 template
+          code=000
+          for i in $(seq 1 60); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:4000$HEALTH_PATH" || true)
+            if [ "$code" = "200" ]; then echo "HTTP 200 on $HEALTH_PATH"; exit 0; fi
+            sleep 2
+          done
+          echo "last status: $code"; docker logs template; exit 1
+      - name: Clean up
+        if: always()
+        run: docker rm -f template || true
