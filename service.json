@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "appName": "vue-app",
+  "appType": "bring-your-own",
+  "stack": "shop",
+  "port": 3000,
+  "healthCheckPath": "/",
+  "dockerfile": "./Dockerfile",
+  "template": {
+    "id": "vue",
+    "label": "Vue (create-vue)",
+    "upstream": "npm create vue@latest",
+    "description": "A real create-vue app, Vite dev server",
+    "notes": "Scaffolder runs at build time; Vite listens on 0.0.0.0 and the port from PORT."
+  }
+}
