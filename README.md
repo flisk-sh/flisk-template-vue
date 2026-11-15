@@ -21,3 +21,5 @@ flisk resource vue-app --type bring-your-own --stack shop --dockerfile ./Dockerf
 ```
 
 Use a resource name that is unique across Flisk projects sharing one Docker daemon.
+
+After `flisk up`, open the URL printed by `flisk status` (for a web UI like this template it is the host-root URL, not `/api/vue-app`).
