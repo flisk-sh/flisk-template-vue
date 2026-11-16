@@ -28,6 +28,19 @@ jobs:
           assert f"flisk resource {app}-copy --type bring-your-own" in section, "README must show a second-copy example with a different name"
           print("README register section is consistent with service.json")
           PY
+      - name: Check service.json web UI routing
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          svc = json.loads(Path("service.json").read_text(encoding="utf-8"))
+          readme = Path("README.md").read_text(encoding="utf-8")
+          assert svc.get("webUi") is True, "service.json must set webUi: true for browser UIs"
+          assert "flisk status" in readme, "README must mention the flisk status URL"
+          assert f"/api/{svc['appName']}" in readme, "README must mention the path-prefix URL is not used"
+          print("service.json and README agree on web UI routing")
+          PY
       - name: Build the image
         run: docker build -t template .
       - name: Run it and expect HTTP 200 on the health path
@@ -35,12 +48,14 @@ jobs:
           HEALTH_PATH=$(python3 -c 'import json;print(json.load(open("service.json"))["healthCheckPath"])')
           docker run -d --name template -e PORT=4000 -p 4000:4000 template
           code=000
+          html=0
           for _ in $(seq 1 60); do
-            code=$(curl -s -o /dev/null -w '%{http_code}' "http://127.0.0.1:4000$HEALTH_PATH" || true)
-            if [ "$code" = "200" ]; then echo "HTTP 200 on $HEALTH_PATH"; exit 0; fi
+            code=$(curl -s -o /tmp/health.html -w '%{http_code}' "http://127.0.0.1:4000$HEALTH_PATH" || true)
+            html=$(grep -ci '<html' /tmp/health.html || true)
+            if [ "$code" = "200" ] && [ "$html" -gt 0 ]; then echo "HTTP 200 with HTML on $HEALTH_PATH"; exit 0; fi
             sleep 2
           done
-          echo "last status: $code"; docker logs template; exit 1
+          echo "last status: $code, html markers: $html"; docker logs template; exit 1
       - name: Clean up
         if: always()
         run: docker rm -f template || true
