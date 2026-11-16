@@ -11,6 +11,23 @@ jobs:
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+      - name: Check README matches service.json
+        run: |
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+
+          readme = Path("README.md").read_text(encoding="utf-8")
+          app = json.loads(Path("service.json").read_text(encoding="utf-8"))["appName"]
+
+          assert f"registers the resource as `{app}`" in readme, "README must mention the service.json resource name"
+          assert "## Use it in a Flisk project" in readme, "README must have the 'Use it in a Flisk project' section"
+          section = readme.split("## Use it in a Flisk project", 1)[1].split("\n## ", 1)[0]
+          assert "flisk up" in section, "the 'Use it in a Flisk project' section must show flisk up for the shipped service.json"
+          assert f"flisk resource {app} --type bring-your-own" not in section, "README must not re-register the service.json resource name"
+          assert f"flisk resource {app}-copy --type bring-your-own" in section, "README must show a second-copy example with a different name"
+          print("README register section is consistent with service.json")
+          PY
       - name: Build the image
         run: docker build -t template .
       - name: Run it and expect HTTP 200 on the health path
