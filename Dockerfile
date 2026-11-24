@@ -1,5 +1,5 @@
 # A real create-vue app: the scaffolder runs at build time, so this stays in step with it.
-FROM node:22-alpine@sha256:0a7108bf6c7bf5de370ffb1a3ed6be93d405b43ff159f681a8d18c0e2bc2e402
+FROM node:26-alpine@sha256:6bd9ab43c0ec0190ca7b2d193906cb8b7edf6e7f4afa43ddeccd6452710bffb5
 WORKDIR /work
 RUN npm create vue@3.24.0 app -- --default
 WORKDIR /work/app
