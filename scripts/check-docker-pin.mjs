@@ -3,7 +3,7 @@ import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 export function findUnpinnedCreators(dockerfile) {
-  return [...dockerfile.matchAll(/npm create\s+[^\s@]+@latest\b/g)].map((match) => match[0]);
+  return [...dockerfile.matchAll(/npm create\s+(?:@[^\s@/]+\/)?[^\s@/]+@latest\b/g)].map((match) => match[0]);
 }
 
 const invokedDirectly = process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
