@@ -7,6 +7,18 @@
     "dead-links": "block",
     "done-without-green": "block",
     "api-contract": "block",
-    "migrations-append-only": "block"
+    "migrations-append-only": "block",
+    "north-star": "report"
+  },
+  "status": "experimental",
+  "owner": "@odykyi",
+  "repo_health": {
+    "inherit": [
+      "CONTRIBUTING",
+      "SECURITY"
+    ]
+  },
+  "reasons": {
+    "north-star": "template/example/starter repo, there is no product number to measure"
   }
 }
